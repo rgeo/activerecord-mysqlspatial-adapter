@@ -130,7 +130,7 @@ module ActiveRecord
           if current_index_ != row_[2]
             next if row_[2] == "PRIMARY" # skip the primary key
             current_index_ = row_[2]
-            indexes_ << ::RGeo::ActiveRecord::Common::IndexDefinition.new(row_[0], row_[2], row_[1] == "0", [], [], row_[10] == 'SPATIAL')
+            indexes_ << ::RGeo::ActiveRecord::SpatialIndexDefinition.new(row_[0], row_[2], row_[1] == "0", [], [], row_[10] == 'SPATIAL')
           end
           indexes_.last.columns << row_[4]
           indexes_.last.lengths << row_[7]
@@ -145,7 +145,7 @@ module ActiveRecord
         
         def initialize(name_, default_, sql_type_=nil, null_=true)
           super(name_, default_,sql_type_, null_)
-          @geometric_type = ::RGeo::ActiveRecord::Common.geometric_type_from_name(sql_type_)
+          @geometric_type = ::RGeo::ActiveRecord.geometric_type_from_name(sql_type_)
           @ar_class = ::ActiveRecord::Base
         end
         
@@ -169,12 +169,12 @@ module ActiveRecord
         
         
         def type_cast(value_)
-          type == :geometry ? ColumnMethods.string_to_geometry(value_, @ar_class) : super
+          type == :geometry ? SpatialColumn.string_to_geometry(value_, @ar_class) : super
         end
         
         
         def type_cast_code(var_name_)
-          type == :geometry ? "::RGeo::ActiveRecord::MysqlCommon::ColumnMethods.string_to_geometry(#{var_name_}, self.class)" : super
+          type == :geometry ? "::ActiveRecord::ConnectionAdapters::MysqlSpatialAdapter::SpatialColumn.string_to_geometry(#{var_name_}, self.class)" : super
         end
         
         
