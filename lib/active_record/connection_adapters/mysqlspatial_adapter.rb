@@ -37,6 +37,11 @@
 require 'rgeo/active_record'
 require 'active_record/connection_adapters/mysql_adapter'
 
+begin
+  require 'versionomy'
+rescue ::LoadError
+end
+
 
 # :stopdoc:
 
@@ -46,14 +51,21 @@ module Arel
     class MySQLSpatial < MySQL
       
       FUNC_MAP = {
-        'ST_WKTToSQL' => 'GeomFromText',
-        'ST_Equals' => 'Equals',
+        'st_wkttosql' => 'GeomFromText',
+        'st_wkbtosql' => 'GeomFromWKB',
+        'st_length' => 'GLength',
       }
       
       include ::RGeo::ActiveRecord::SpatialToSql
       
       def st_func(standard_name_)
-        FUNC_MAP[standard_name_] || standard_name_
+        if (name_ = FUNC_MAP[standard_name_.downcase])
+          name_
+        elsif standard_name_ =~ /^st_(\w+)$/i
+          $1
+        else
+          standard_name_
+        end
       end
       
     end
@@ -110,6 +122,15 @@ module ActiveRecord
       
       
       ADAPTER_NAME = 'MysqlSpatial'.freeze
+      
+      
+      # Current version of MysqlSpatialAdapter as a frozen string
+      VERSION_STRING = ::File.read(::File.dirname(__FILE__)+'/../../../Version').strip.freeze
+      
+      # Current version of MysqlSpatialAdapter as a Versionomy object, if the
+      # Versionomy gem is available; otherwise equal to VERSION_STRING.
+      VERSION = defined?(::Versionomy) ? ::Versionomy.parse(VERSION_STRING) : VERSION_STRING
+      
       
       NATIVE_DATABASE_TYPES = MysqlAdapter::NATIVE_DATABASE_TYPES.merge(:geometry => {:name => "geometry"}, :point => {:name => "point"}, :line_string => {:name => "linestring"}, :polygon => {:name => "polygon"}, :geometry_collection => {:name => "geometrycollection"}, :multi_point => {:name => "multipoint"}, :multi_line_string => {:name => "multilinestring"}, :multi_polygon => {:name => "multipolygon"})
       
