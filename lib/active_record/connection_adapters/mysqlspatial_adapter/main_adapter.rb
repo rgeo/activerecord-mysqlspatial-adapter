@@ -117,8 +117,9 @@ module ActiveRecord
               current_index_ = row_[2]
               indexes_ << ::RGeo::ActiveRecord::SpatialIndexDefinition.new(row_[0], row_[2], row_[1] == "0", [], [], row_[10] == 'SPATIAL')
             end
-            indexes_.last.columns << row_[4]
-            indexes_.last.lengths << row_[7]
+            last_index_ = indexes_.last
+            last_index_.columns << row_[4]
+            last_index_.lengths << row_[7] unless last_index_.spatial
           end
           result_.free
           indexes_
