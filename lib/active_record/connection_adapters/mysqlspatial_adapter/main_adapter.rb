@@ -34,6 +34,8 @@
 ;
 
 
+# :stopdoc:
+
 module ActiveRecord
   
   module ConnectionAdapters
@@ -44,13 +46,11 @@ module ActiveRecord
       class MainAdapter < ConnectionAdapters::MysqlAdapter
         
         
-        ADAPTER_NAME = 'MysqlSpatial'.freeze
-        
         NATIVE_DATABASE_TYPES = MysqlAdapter::NATIVE_DATABASE_TYPES.merge(:spatial => {:name => "geometry"})
         
         
         def adapter_name
-          ADAPTER_NAME
+          MysqlSpatialAdapter::ADAPTER_NAME
         end
         
         
@@ -134,3 +134,5 @@ module ActiveRecord
   end
   
 end
+
+# :startdoc:
