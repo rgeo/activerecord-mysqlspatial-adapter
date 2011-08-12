@@ -49,6 +49,11 @@ module ActiveRecord
         NATIVE_DATABASE_TYPES = MysqlAdapter::NATIVE_DATABASE_TYPES.merge(:spatial => {:name => "geometry"})
         
         
+        def set_rgeo_factory_settings(factory_settings_)
+          @rgeo_factory_settings = factory_settings_
+        end
+        
+        
         def adapter_name
           MysqlSpatialAdapter::ADAPTER_NAME
         end
@@ -70,6 +75,38 @@ module ActiveRecord
           else
             super
           end
+        end
+        
+        
+        def substitute_at(column_, index_)
+          if column_.spatial?
+            ::Arel.sql('GeomFromText(?,?)')
+          else
+            super
+          end
+        end
+        
+        
+        def type_cast(value_, column_)
+          if column_.spatial? && ::RGeo::Feature::Geometry.check_type(value_)
+            ::RGeo::WKRep::WKTGenerator.new.generate(value_)
+          else
+            super
+          end
+        end
+        
+        
+        def exec_stmt(sql_, name_, binds_)
+          real_binds_ = []
+          binds_.each do |bind_|
+            if bind_[0].spatial?
+              real_binds_ << bind_
+              real_binds_ << [bind_[0], bind_[1].srid]
+            else
+              real_binds_ << bind_
+            end
+          end
+          super(sql_, name_, real_binds_)
         end
         
         
@@ -100,7 +137,8 @@ module ActiveRecord
           result_ = execute("SHOW FIELDS FROM #{quote_table_name(table_name_)}", :skip_logging)
           columns_ = []
           result_.each do |field_|
-            columns_ << SpatialColumn.new(field_[0], field_[4], field_[1], field_[2] == "YES")
+            columns_ << SpatialColumn.new(@rgeo_factory_settings, table_name_.to_s,
+              field_[0], field_[4], field_[1], field_[2] == "YES")
           end
           result_.free
           columns_
