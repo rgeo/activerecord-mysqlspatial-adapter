@@ -49,6 +49,15 @@ module ActiveRecord
         NATIVE_DATABASE_TYPES = MysqlAdapter::NATIVE_DATABASE_TYPES.merge(:spatial => {:name => "geometry"})
         
         
+        def initialize(*args_)
+          super
+          # Rails 3.2 way of defining the visitor: do so in the constructor
+          if defined?(@visitor) && @visitor
+            @visitor = ::Arel::Visitors::MySQLSpatial.new(self)
+          end
+        end
+        
+        
         def set_rgeo_factory_settings(factory_settings_)
           @rgeo_factory_settings = factory_settings_
         end
