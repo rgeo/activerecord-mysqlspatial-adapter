@@ -1,15 +1,15 @@
 # -----------------------------------------------------------------------------
-# 
+#
 # MysqlSpatial adapter for ActiveRecord
-# 
+#
 # -----------------------------------------------------------------------------
 # Copyright 2010 Daniel Azuma
-# 
+#
 # All rights reserved.
-# 
+#
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are met:
-# 
+#
 # * Redistributions of source code must retain the above copyright notice,
 #   this list of conditions and the following disclaimer.
 # * Redistributions in binary form must reproduce the above copyright notice,
@@ -18,7 +18,7 @@
 # * Neither the name of the copyright holder, nor the names of any other
 #   contributors to this software, may be used to endorse or promote products
 #   derived from this software without specific prior written permission.
-# 
+#
 # THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
 # AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
 # IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -37,18 +37,18 @@
 # :stopdoc:
 
 module ActiveRecord
-  
+
   module ConnectionAdapters
-    
+
     module MysqlSpatialAdapter
-      
-      
+
+
       class MainAdapter < ConnectionAdapters::MysqlAdapter
-        
-        
+
+
         NATIVE_DATABASE_TYPES = MysqlAdapter::NATIVE_DATABASE_TYPES.merge(:spatial => {:name => "geometry"})
-        
-        
+
+
         def initialize(*args_)
           super
           # Rails 3.2 way of defining the visitor: do so in the constructor
@@ -56,28 +56,28 @@ module ActiveRecord
             @visitor = ::Arel::Visitors::MySQLSpatial.new(self)
           end
         end
-        
-        
+
+
         def set_rgeo_factory_settings(factory_settings_)
           @rgeo_factory_settings = factory_settings_
         end
-        
-        
+
+
         def adapter_name
           MysqlSpatialAdapter::ADAPTER_NAME
         end
-        
-        
+
+
         def spatial_column_constructor(name_)
           ::RGeo::ActiveRecord::DEFAULT_SPATIAL_COLUMN_CONSTRUCTORS[name_]
         end
-        
-        
+
+
         def native_database_types
           NATIVE_DATABASE_TYPES
         end
-        
-        
+
+
         def quote(value_, column_=nil)
           if ::RGeo::Feature::Geometry.check_type(value_)
             "GeomFromWKB(0x#{::RGeo::WKRep::WKBGenerator.new(:hex_format => true).generate(value_)},#{value_.srid})"
@@ -85,8 +85,8 @@ module ActiveRecord
             super
           end
         end
-        
-        
+
+
         def substitute_at(column_, index_)
           if column_.spatial?
             ::Arel.sql('GeomFromText(?,?)')
@@ -94,8 +94,8 @@ module ActiveRecord
             super
           end
         end
-        
-        
+
+
         def type_cast(value_, column_)
           if column_.spatial? && ::RGeo::Feature::Geometry.check_type(value_)
             ::RGeo::WKRep::WKTGenerator.new.generate(value_)
@@ -103,8 +103,8 @@ module ActiveRecord
             super
           end
         end
-        
-        
+
+
         def exec_stmt(sql_, name_, binds_)
           real_binds_ = []
           binds_.each do |bind_|
@@ -117,8 +117,8 @@ module ActiveRecord
           end
           super(sql_, name_, real_binds_)
         end
-        
-        
+
+
         def type_to_sql(type_, limit_=nil, precision_=nil, scale_=nil)
           if (info_ = spatial_column_constructor(type_.to_sym))
             type_ = limit_[:type] || type_ if limit_.is_a?(::Hash)
@@ -127,8 +127,8 @@ module ActiveRecord
           end
           super(type_, limit_, precision_, scale_)
         end
-        
-        
+
+
         def add_index(table_name_, column_name_, options_={})
           if options_[:spatial]
             index_name_ = index_name(table_name_, :column => Array(column_name_))
@@ -140,8 +140,8 @@ module ActiveRecord
             super
           end
         end
-        
-        
+
+
         def columns(table_name_, name_=nil)
           result_ = execute("SHOW FIELDS FROM #{quote_table_name(table_name_)}", :skip_logging)
           columns_ = []
@@ -152,8 +152,8 @@ module ActiveRecord
           result_.free
           columns_
         end
-        
-        
+
+
         def indexes(table_name_, name_=nil)
           indexes_ = []
           current_index_ = nil
@@ -171,15 +171,15 @@ module ActiveRecord
           result_.free
           indexes_
         end
-        
-        
+
+
       end
-      
-      
+
+
     end
-    
+
   end
-  
+
 end
 
 # :startdoc:

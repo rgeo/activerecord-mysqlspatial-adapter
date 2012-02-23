@@ -94,10 +94,12 @@ write more complex queries in SQL.
 
 == Installation And Configuration
 
-IMPORTANT: This adapter is currently *not* compatible with Rails 3.1.
-This is due to an apparent bug in the mysql gem (as of version 2.8.1),
-which does not appear to recognize MYSQL_TYPE_GEOMETRY in the binary
-protocol.
+IMPORTANT: This adapter is currently *not* compatible with Rails version
+3.1 and later. This is due to an apparent bug in the mysql gem (as of
+version 2.8.1), which does not appear to recognize MYSQL_TYPE_GEOMETRY in
+the binary protocol. I'm not aware of a workaround for this issue right
+now. Please use mysql2 and activerecord-mysql2spatial-adapter if you are
+using MySQL spatial and Rails 3.1 or later.
 
 === Installing The Adapter Gem
 
@@ -107,8 +109,8 @@ This adapter has the following requirements:
 * MySQL server 5.0 or later required for spatial extensions.
 * \ActiveRecord 3.0.3 or later. Earlier versions will not work.
 * mysql gem 2.8 or later.
-* rgeo gem 0.3.2 or later.
-* rgeo-activerecord gem 0.4.0 or later.
+* rgeo gem 0.3.4 or later.
+* rgeo-activerecord gem 0.4.3 or later.
 
 Install this adapter as a gem:
 
@@ -170,7 +172,7 @@ Contact the author at dazuma at gmail dot com.
 The MysqlSpatial Adapter and its supporting libraries (including RGeo) are
 written by Daniel Azuma (http://www.daniel-azuma.com).
 
-Development of RGeo is sponsored by GeoPage, Inc. (http://www.geopage.com).
+Development is supported by Pirq. (http://www.pirq.com).
 
 This adapter implementation owes some debt to the spatial_adapter plugin
 (http://github.com/fragility/spatial_adapter). Although we made a few
