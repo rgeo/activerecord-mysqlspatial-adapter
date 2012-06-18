@@ -1,0 +1,8 @@
+Mon, 18 Jun 2012 12:01:00 -0700
+lib/active_record/connection_adapters/mysqlspatial_adapter/arel_tosql.rb	Wed, 22 Feb 2012 13:02:16 -0800
+lib/active_record/connection_adapters/mysqlspatial_adapter/main_adapter.rb	Wed, 22 Feb 2012 13:02:16 -0800
+lib/active_record/connection_adapters/mysqlspatial_adapter/spatial_column.rb	Wed, 22 Feb 2012 13:02:16 -0800
+lib/active_record/connection_adapters/mysqlspatial_adapter/version.rb	Wed, 22 Feb 2012 13:02:16 -0800
+lib/active_record/connection_adapters/mysqlspatial_adapter.rb	Wed, 22 Feb 2012 13:02:16 -0800
+History.rdoc	Wed, 22 Feb 2012 12:38:16 -0800
+README.rdoc	Mon, 18 Jun 2012 11:59:03 -0700
