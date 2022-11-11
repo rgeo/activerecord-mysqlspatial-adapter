@@ -1,4 +1,4 @@
-:warning: This repository is unmaintained, consider using [activerecord-mysql2spatial-adapter](https://github.com/rgeo/activerecord-mysql2spatial-adapter), or directly [rgeo-activerecord](https://github.com/rgeo/rgeo-activerecord).
+:warning: This repository is unmaintained, consider using {activerecord-mysql2spatial-adapter}[https://github.com/rgeo/activerecord-mysql2spatial-adapter], or directly {rgeo-activerecord}[https://github.com/rgeo/rgeo-activerecord].
 
 == MySQL Spatial \ActiveRecord Adapter
 
